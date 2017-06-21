@@ -1,0 +1,32 @@
+#%Module########################################################################
+##
+## {{package_name}} modulefile
+##
+
+proc ModulesHelp { } {
+        global version
+
+        puts stderr "   {{package_description}}"
+        puts stderr "   Version {{version}}"
+}
+
+set name          {{package_name}}
+set version       {{version}}
+set base          {{module_dir}}
+
+module-whatis   "{{package_description}} {{version}}"
+
+if {[info exists env(PYTHONPATH)] && {{esc}}env(PYTHONPATH) != ""} {
+        puts stderr "Warning: PYTHONPATH is {{esc}}env(PYTHONPATH)"
+        puts stderr "Try unloading all python modules if you experience any issues."
+}
+
+# This disables loading modules and .pth files from ~/.local/lib/python2.7/...
+setenv PYTHONNOUSERSITE 1
+
+# Enable segfault tracebacks in py3. https://docs.python.org/3/library/faulthandler.html
+setenv PYTHONFAULTHANDLER 1
+
+prepend-path PATH {{module_dir}}/{{package_name}}/{{version}}/envs/agdc/bin
+setenv GDAL_DATA {{module_dir}}/{{package_name}}/{{version}}/envs/agdc/share/gdal
+

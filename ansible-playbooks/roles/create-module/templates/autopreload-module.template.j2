@@ -1,0 +1,30 @@
+#%Module########################################################################
+##
+## agdc-py3 modulefile
+##
+
+proc ModulesHelp { } {
+        global version
+
+        puts stderr "   An analysis environment for satellite and other earth observation data"
+        puts stderr "   Version 1.3.2"
+}
+
+set version       1.3.2
+set name          agdc-py3
+set base          /g/data/v10/public/modules
+
+module-whatis   "An analysis environment for satellite and other earth observation data 1.3.2"
+
+if { ! [is-loaded agdc-py3-env/20170427] } {
+    module load agdc-py3-env/20170427
+}
+prepend-path PYTHONPATH /g/data/v10/public/modules/agdc-py3/1.3.2/lib/python3.6/site-packages
+prepend-path PATH /g/data/v10/public/modules/agdc-py3/1.3.2/bin
+
+setenv LC_ALL en_AU.utf8
+setenv LANG C.UTF-8
+
+if { [ module-info mode remove ] } {
+    module unload agdc-py3-env/20170427
+}

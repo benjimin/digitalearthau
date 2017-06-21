@@ -1,0 +1,32 @@
+---
+# tasks file for miniconda
+- name: download installer...
+  get_url:
+    url: '{{miniconda_installer_url}}'
+    dest: /tmp/{{miniconda_installer_sh}}
+    timeout: '{{miniconda_timeout_seconds}}'
+    checksum: '{{miniconda_checksum}}'
+    mode: 0755
+
+- name: installing....
+  command: /tmp/{{miniconda_installer_sh}} -b -p {{miniconda_install_dir}}
+  args:
+    creates: '{{miniconda_install_dir}}'
+
+- name: deleting installer...
+  when: miniconda_cleanup
+  file:
+    path: /tmp/{{miniconda_installer_sh}}
+    state: absent
+
+- name: conda updates
+  when: miniconda_pkg_update
+  command: '{{miniconda_conda_bin}} update -y --all'
+
+- name: remove conda-curl since it conflicts with the system curl
+  command: '{{miniconda_conda_bin}} remove -y curl'
+  args:
+    removes: '{{miniconda_link_dir}}/lib/libcurl.a'
+
+- name: use conda-forge channel by default
+  command: '{{miniconda_conda_bin}} config --prepend channels conda-forge --system'

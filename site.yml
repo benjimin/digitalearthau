@@ -1,0 +1,18 @@
+---
+
+- hosts: nci
+
+  vars:
+
+
+  roles:
+  - ensure_miniconda
+  - role: conda_env
+    py_version: 2
+    packages: environment.yml
+
+  - role: conda_env
+    py_version: 3
+    packages: environment.yml
+
+  - role: datacube_env

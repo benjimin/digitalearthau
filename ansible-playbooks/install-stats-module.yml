@@ -9,6 +9,7 @@
     checkout_path: "{{ lookup('env', 'TMPDIR') }}/{{ module_name }}"
     python_version: "3.5"
     python_path: "{{ install_root }}/lib/python{{ python_version }}/site-packages/"
+
   environment:
     PYTHONPATH: "{{ python_path }}"
 

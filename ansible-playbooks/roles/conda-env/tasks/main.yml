@@ -1,0 +1,36 @@
+---
+- name: mkdir env-ymls
+  file:
+    path: '{{conda_env_env_ymls}}'
+    state: directory
+    mode: 0755
+
+- name: injecting/templatizing environment.yml...
+  template:
+    src: '{{conda_env_environment}}'
+    dest: '{{conda_env_fq_dest_environment}}'
+    mode: 0644
+
+- name: create the conda environment
+  command: '{{conda_env_bin_dir}}/conda env create -q -n {{conda_env_name}}'
+  args:
+    creates: '{{conda_env_conda_dir}}/envs/{{conda_env_name}}'
+
+
+- name: install packages into environment
+  command: '{{conda_env_bin_dir}}/conda install -f={{conda_env_fq_dest_environment}} -q -n {{conda_env_name}}'
+
+
+- name: install additional packages...
+  when: conda_env_addl_pkgs is defined
+  with_items: '{{ conda_env_addl_pkgs | default([]) }}'
+  command: '{{conda_env_bin_dir}}/conda install -n {{conda_env_name}} -q -y -c {{ item.c | default("defaults") }} {{ item.p }}'
+
+- name: updating environment
+  when: conda_env_update_packages
+  command: '{{conda_env_bin_dir}}/conda upgrade -n {{conda_env_name}} -q -y --all'
+
+- name: cleanup
+  when: conda_env_cleanup
+  command: '{{conda_env_bin_dir}}/conda clean -tipsy'
+

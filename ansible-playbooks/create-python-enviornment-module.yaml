@@ -1,0 +1,46 @@
+---
+- hosts: all
+  vars:
+    project_repo: https://github.com/GeoscienceAustralia/digitalearthau.git
+    modules_path: /g/data/v10/public/modules
+    module_name: digitalearthau-env
+    module_version: develop
+    install_root: "{{ modules_path }}/{{ module_name }}/{{ module_version }}"
+    checkout_path: "{{ lookup('env', 'TMPDIR') }}/{{ module_name }}"
+    python_version: "3.6"
+    python_path: "{{ install_root }}/lib/python{{ python_version }}/site-packages/"
+
+    conda_env_env:
+      PYTHONPATH: "{{ python_path }}:{{ ansible_env.PYTHONPATH }}"
+      PATH: "{{ install_root }}/bin:{{ ansible_env.PATH }}"
+
+
+  pre_tasks:
+    - name: new variable with current date time
+      set_fact: temp="{{lookup('pipe','date \"+%Y%m%d\"')}}"
+
+
+  roles:
+    - role: miniconda
+      miniconda_parent_dir: "{{ modules_path }}"
+      miniconda_name: "{{ conda_folder_name }}"
+
+    - role: conda-env
+      conda_env_name: digitalearthau
+      conda_env_environment: environment.yml
+
+  tasks:
+    - name: install some packages
+      include_role:
+        name: module-datacube
+      environment: "{{conda_env_env}}"
+
+#      with_items:
+#        - '{{ roleinput1 }}'
+#        - '{{ roleinput2 }}'
+#      loop_control:
+#        loop_var: roleinputvar
+
+  environment:
+    PYTHONPATH: "{{ python_path }}"
+
