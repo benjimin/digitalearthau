@@ -1,0 +1,2 @@
+
+remote_repo: "{{ project_repo }}"

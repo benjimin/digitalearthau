@@ -1,42 +1,47 @@
 ---
+
 - hosts: all
   vars:
     project_repo: https://github.com/GeoscienceAustralia/digitalearthau.git
+
     modules_path: /g/data/v10/public/modules
     module_name: digitalearthau
     base_path: "{{ modules_path }}/{{ module_name }}"
+
     module_version: develop
-#    install_root: "{{ modules_path }}/{{ module_name }}/{{ module_version }}"
-#    checkout_path: "{{ lookup('env', 'TMPDIR') }}/{{ module_name }}"
+    install_root: "{{ base_path }}/{{ module_version }}"
+
+    checkout_path: "{{ lookup('env', 'TMPDIR') }}/{{ module_name }}"
     python_version: "3.6"
     python_path: "{{ base_path }}/lib/python{{ python_version }}/site-packages/"
 
-    conda_env_vars:
-      PYTHONPATH: "{{ python_path }}:{{ ansible_env.PYTHONPATH }}"
-      PATH: "{{ base_path }}/bin:{{ ansible_env.PATH }}"
+  environment:
+    PYTHONPATH: "{{ python_path }}:{{ ansible_env.PYTHONPATH }}"
+    PATH: "{{ install_root }}/bin:{{ ansible_env.PATH }}"
 
 
-  pre_tasks:
-    - name: new variable with current date time
-      set_fact: temp="{{lookup('pipe','date \"+%Y%m%d\"')}}"
+#  pre_tasks:
+#    - name: new variable with current date time
+#      set_fact: temp="{{lookup('pipe','date \"+%Y%m%d\"')}}"
 
 
   roles:
     - role: miniconda
       miniconda_parent_dir: "{{ base_path }}"
+      miniconda_link_subdir: "{{module_version}}"
 
 
     - role: conda-env
       conda_env_name: "{{ module_version }}"
-      conda_env_environment: environment.yml
+      miniconda_install_dir: "{{miniconda_install_dir}}"
 
   tasks:
-    - name: install some packages
-      include_role:
-        name: module-datacube
-      vars:
-        rolevar1: 
-      environment: "{{conda_env_env}}"
+#    - name: install some packages
+#      include_role:
+#        name: module-datacube
+#      vars:
+#        rolevar1: 
+#      environment: "{{conda_env_env}}"
 
 #      with_items:
 #        - '{{ roleinput1 }}'
