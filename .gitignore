@@ -67,3 +67,9 @@ docs/html/
 
 # Generated Documentation
 docs/dev/generate/
+
+# Vim swap files
+*.swp
+
+# Ansible retry files
+*.retry
