@@ -1,5 +1,6 @@
 ---
 - hosts: all
+
   vars:
     project_repo: https://github.com/GeoscienceAustralia/digitalearthau.git
     modules_path: /g/data/v10/public/modules
@@ -18,7 +19,7 @@
 
   pre_tasks:
     - name: new variable with current date time
-      set_fact: temp="{{lookup('pipe','date \"+%Y%m%d\"')}}"
+      set_fact: datestamp="{{lookup('pipe','date \"+%Y%m%d\"')}}"
 
 
   roles:
