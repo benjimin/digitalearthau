@@ -1,5 +1,7 @@
 - name: Ensure {{modules_path}}/modulefiles/{{module_name}} exists
-  file: path={{modules_path}}/modulefiles/{{module_name}} state=directory
+  file:
+    path: "{{modules_path}}/modulefiles/{{module_name}}"
+    state: directory
 
 - name: Create modulefile
   template:
